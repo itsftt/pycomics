@@ -20,7 +20,7 @@ def main():
 		i = 0
 		while i < len(args.d):
 			c = dm5 if 'dm5' in args.d[i] else comic8
-			if args.d[i+1][-1:].isdigit():
+			if i+1 < len(args.d)  and args.d[i+1][-1:].isdigit():
 				c.getAll(args.d[i], int(args.d[i+1]))
 				i += 1
 			else:
