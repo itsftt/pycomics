@@ -42,12 +42,14 @@ class dm5(ComicSite):
 				i += len(u)
 				urls += u
 				for url in u:
-					self.getPic(url, '--referer %s -O %s'%('http://www.dm5.com/%s/'%cid, url.rsplit('/',1)[-1].split('?')[0]))
+					self.getPic(url, {'--referer': 'http://www.dm5.com/%s/'%cid,
+					'-O': url.rsplit('/',1)[-1].split('?')[0] })
 			else:
 				if u[0] not in urls:
 					urls.append(u[0])
 					url = u[0]
-					self.getPic(url, '--referer %s -O %s'%('http://www.dm5.com/%s/'%cid, url.rsplit('/',1)[-1].split('?')[0]))
+					self.getPic(url, {'--referer': 'http://www.dm5.com/%s/'%cid,
+					'-O': url.rsplit('/',1)[-1].split('?')[0] })
 				break
 		os.chdir('..')
 		return name
