@@ -19,7 +19,7 @@ class comic8(ComicSite):
 		return ('"%s/%s/%s/%s-%s"'%(self.root, self.path(), i[0], i[1], i[2])).encode('utf8')
 
 	def getTitle(self, page):
-		return self.untag(re.search('<td align="center"><font.*</td>', page).group(0)).strip().decode('big5')
+		return self.untag(re.search(u'<title>(.*?)漫畫,(.*?)</title>', page.decode('cp950'), re.DOTALL).group(1)).strip().replace('\r','').replace('\n','')
 
 	def getVolumn(self, url, force=True):
 		def nn(n):
@@ -30,7 +30,10 @@ class comic8(ComicSite):
 		def mm(p):
 			return ((p-1)/10)%10+((p-1)%10)*3
 
-		ti = int(url.split('.')[-2].split('-')[-1])
+		if '-' in url:
+			ti = int(url.split('.')[-2].split('-')[-1])
+		elif '_' in url:
+			ti = int(url.split('.')[-2].split('_')[-1])
 		ch = url.split('=')[-1]
 		f = 50
 
@@ -52,7 +55,7 @@ class comic8(ComicSite):
 
 		e = 0
 		for p in range(1, ps+1):
-			url = 'http://img%s.8comic.com/%s/%d/%s/%s_%s.jpg'%(ss(c,4,2),ss(c,6,1),ti,ss(c,0,4),nn(p),ss(c,mm(p)+10,3,f))
+			url = 'http://img%s.6comic.com:99/%s/%d/%s/%s_%s.jpg'%(ss(c,4,2),ss(c,6,1),ti,ss(c,0,4),nn(p),ss(c,mm(p)+10,3,f))
 			self.getPic(url)
 		os.chdir('..')
 		return ch
@@ -60,12 +63,12 @@ class comic8(ComicSite):
 	def getCid(self, url):
 		return url.split('.')[-2].split('/')[-1]
 
-	js = urllib2.urlopen('http://www.comicbus.com/js/comicview.js').read().replace('window.open','print(url);//').replace('var u','return baseurl+url;//')
+	js = urllib2.urlopen('http://www.comicbus.com/js/comicview.js').read().replace('window.open','return baseurl+url;//').replace('if(getCookie','//')
 	def getVolumnsUrl(self, url, page, skip=0):
-		def getUrl((no, catid)):
-			ret = self.execJs(self.js + "\nprint(cview('%s',%s));"%(no, catid))
+		def getUrl((no, catid, copyright)):
+			ret = self.execJs(self.js + "\nprint(cview('%s',%s,%s));"%(no, catid, copyright))
 			return ret
-		chs = re.findall("cview.'([^.]*).html',([0-9]*).", page)
+		chs = re.findall("cview.'([^.]*).html',([0-9]*),([0-9]).", page)
 		v = [c for c in chs if int(c[0].split('-')[-1]) < 8000]
 		s = [c for c in chs if int(c[0].split('-')[-1]) > 7999]
 		return map(getUrl, v[skip:] + s[skip:])

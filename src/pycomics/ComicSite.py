@@ -8,6 +8,12 @@ import os
 
 class ComicSite(object):
 	opener = urllib2.build_opener()
+	opener.addheaders = [
+		("User-Agent", "Mozilla/5.0 Gecko/2010 Firefox/5"),
+		("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
+		("Accept-Language", "en-us,en;q=0.5"),
+		("Accept-Encoding", "deflate"),
+	]
 	root = os.path.expanduser("~")
 	os.chdir(root)
 
@@ -52,8 +58,11 @@ class ComicSite(object):
 				r = self.opener.open(url,timeout=5)
 				return r
 			except:
-				print sys.exc_info()
-				print '?', i , url
+				import traceback
+				print '??', i , url
+				print traceback.format_exc()
+				import time
+				time.sleep(.5)
 				pass
 
 	def untag(self, s):
@@ -76,7 +85,6 @@ class ComicSite(object):
 					if os.system('/usr/local/bin/wget %s -c "%s"'%(' '.join(map(lambda i:"%s %s"%i, opts.items())), url)) == 0:
 						break
 		else:
-			print url
 			req = urllib2.Request(url)
 			if '--referer' in opts:
 				req.add_header('Referer', opts['--referer'])

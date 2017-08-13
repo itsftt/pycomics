@@ -1,11 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import urllib2
 import re
 from ComicSite import *
 
 class dm5(ComicSite):
-	opener = urllib2.build_opener()
-	opener.addheaders.append(('Cookie', 'isAdult=1'))
+	ComicSite.opener.addheaders.append(('Cookie', 'isAdult=1'))
 
 	def toUrl(self, url):
 		if url.startswith('http'):
@@ -21,7 +21,7 @@ class dm5(ComicSite):
 
 	def getVolumnsUrl(self, url, page, skip=0):
 		volumns = re.findall('<a class="tg" href="/(.*?)/" title=".*?">([^<]*?)</a>',page)[::-1]
-		return map(lambda (c, n): (c, n.replace('&nbsp;', ' ').strip()), volumns[skip:])
+		return map(lambda (c, n): (c, "%s-%s"%(n.replace('&nbsp;', ' ').split('漫画 ')[-1].strip(), c)), volumns[skip:])
 
 	def comicPath(self, i):
 		return '"%s/%s/%s/%s"'%(self.root, self.path(), i[0], i[2])
