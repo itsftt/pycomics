@@ -37,6 +37,10 @@ class comic8(ComicSite):
 		ch = url.split('=')[-1]
 		f = 50
 
+		if not self.chdir('%d-%s'%(ti,ch)) and not force:
+			os.chdir('..')
+			return
+
 		page = self.urlopen(url).read()
 		cs=re.search("cs='([^']*)", page).group(1)
 
@@ -48,10 +52,6 @@ class comic8(ComicSite):
 				ci=i
 				break
 		ps = int(ss(c,7,3))
-		
-		if not self.chdir('%d-%s'%(ti,ch)) and not force:
-			os.chdir('..')
-			return
 
 		e = 0
 		for p in range(1, ps+1):
