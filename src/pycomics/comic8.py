@@ -26,11 +26,20 @@ function nn(n){return n<10?'00'+n:n<100?'0'+n:n;}
 function ss(a,b,c,d){var e=a.substring(b,b+c);return d==null?e.replace(/[a-z]*/gi,""):e;}
 function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 	def getVolumn(self, url, force=True):
+		def nn(n):
+			return '00%d'%n if n<10 else ('0%d'%n if n<100 else n)
+		def ss(a,b,c,d=None):
+			e=a[int(b):int(b)+int(c)]
+			return re.sub("[a-z]*",'',e) if d==None else e
+		def mm(p):
+			return ((p-1)/10)%10+((p-1)%10)*3
+
 		if '-' in url:
 			ti = int(url.split('.')[-2].split('-')[-1])
 		elif '_' in url:
 			ti = int(url.split('.')[-2].split('_')[-1])
 		ch = url.split('=')[-1]
+		f = 50
 
 		if not self.chdir('%d-%s'%(ti,ch)) and not force:
 			os.chdir('..')
@@ -38,9 +47,27 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 
 		page = self.urlopen(url).read()
 
-		picsjs = re.search('var chs=.*break; }}', page).group(0).replace("ge('TheImg').src = ","for(p=1;p<=ps;p++){print(").replace("jpg';", "jpg')};")
-		for url in self.execJs(self.volumnJs + 'var ch=%s;'%ch + picsjs).split('\n'):
-			self.getPic(url)
+		picsjs = re.search('var chs=.*break; }}', page)
+		if not picsjs:
+			cs=re.search("cs='([^']*)", page).group(1)
+
+			cc=len(cs)
+			c=ss(cs,cc-f,f)
+			for i in range(cc/f):
+				if ss(cs,i*f,4)==ch:
+					c=ss(cs,i*f,f,f)
+					ci=i
+					break
+			ps = int(ss(c,7,3))
+
+			e = 0
+			for p in range(1, ps+1):
+				url = 'http://img%s.6comic.com:99/%s/%d/%s/%s_%s.jpg'%(ss(c,4,2),ss(c,6,1),ti,ss(c,0,4),nn(p),ss(c,mm(p)+10,3,f))
+				self.getPic(url)
+		else:
+			picsjs = picsjs.group(0).replace("ge('TheImg').src = ","for(p=1;p<=ps;p++){print(").replace("jpg';", "jpg')};")
+			for url in self.execJs(self.volumnJs + 'var ch=%s;'%ch + picsjs).split('\n'):
+				self.getPic(url)
 
 		os.chdir('..')
 		return ch
