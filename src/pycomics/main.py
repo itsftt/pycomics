@@ -3,9 +3,9 @@
 
 
 def main():
-    from argparser import args, parser
-    from dm5 import dm5
-    from comic8 import comic8
+    from .argparser import args, parser
+    from .dm5 import dm5
+    from .comic8 import comic8
     dm5 = dm5()
     comic8 = comic8()
 

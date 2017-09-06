@@ -3,7 +3,7 @@
 import os
 import re
 import requests
-from ComicSite import ComicSite
+from .ComicSite import ComicSite
 
 
 class comic8(ComicSite):

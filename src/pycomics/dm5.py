@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from ComicSite import ComicSite
+from .ComicSite import ComicSite
 
 
 class dm5(ComicSite):
