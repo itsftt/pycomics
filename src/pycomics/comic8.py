@@ -19,7 +19,7 @@ class comic8(ComicSite):
 		return ('"%s/%s/%s/%s-%s"'%(self.root, self.path(), i[0], i[1], i[2])).encode('utf8')
 
 	def getTitle(self, page):
-		return self.untag(re.search(u'<title>(.*?)漫畫,(.*?)</title>', page.decode('cp950'), re.DOTALL).group(1)).strip().replace('\r','').replace('\n','')
+		return self.untag(re.search(u'","(.*?)".;showhistory', page.decode('cp950'), re.DOTALL).group(1)).strip().replace('\r','').replace('\n','')
 
 	volumnJs = '''var y=46;function lc(l){if(l.length!=2 ) return l;var az="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";var a=l.substring(0,1);var b=l.substring(1,2);if(a=="Z") return 8000+az.indexOf(b);else return az.indexOf(a)*52+az.indexOf(b);}function su(a,b,c){var e=(a+'').substring(b,b+c);return (e);}
 function nn(n){return n<10?'00'+n:n<100?'0'+n:n;}
@@ -81,6 +81,7 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 			ret = self.execJs(self.js + "\nprint(cview('%s',%s,%s));"%(no, catid, copyright))
 			return ret
 		chs = re.findall("cview.'([^.]*).html',([0-9]*),([0-9]).", page)
+                chs = chs[:len(chs)/2]
 		v = [c for c in chs if int(c[0].split('-')[-1]) < 8000]
 		s = [c for c in chs if int(c[0].split('-')[-1]) > 7999]
 		return map(getUrl, v[skip:] + s[skip:])
