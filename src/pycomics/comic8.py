@@ -30,7 +30,7 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 			return '00%d'%n if n<10 else ('0%d'%n if n<100 else n)
 		def ss(a,b,c,d=None):
 			e=a[int(b):int(b)+int(c)]
-			return re.sub("[a-z]*",'',e) if d==None else e
+			return re.sub("[a-zA-Z]*",'',e) if d==None else e
 		def mm(p):
 			return ((p-1)/10)%10+((p-1)%10)*3
 
@@ -47,7 +47,7 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 
 		page = self.urlopen(url).read()
 
-		picsjs = re.search('var chs=.*break; }}', page)
+		picsjs = re.search('var chs=.*break; ?}}', page)
 		if not picsjs:
 			cs=re.search("cs='([^']*)", page).group(1)
 
@@ -65,7 +65,7 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 				url = 'http://img%s.6comic.com:99/%s/%d/%s/%s_%s.jpg'%(ss(c,4,2),ss(c,6,1),ti,ss(c,0,4),nn(p),ss(c,mm(p)+10,3,f))
 				self.getPic(url)
 		else:
-			picsjs = picsjs.group(0).replace("ge('TheImg').src = ","for(p=1;p<=ps;p++){print(").replace("jpg';", "jpg')};")
+			picsjs = picsjs.group(0).replace("ge('TheImg').src=","for(p=1;p<=ps;p++){print(").replace("jpg';", "jpg')};")
 			for url in self.execJs(self.volumnJs + 'var ch=%s;'%ch + picsjs).split('\n'):
 				self.getPic(url)
 
@@ -81,7 +81,7 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 			ret = self.execJs(self.js + "\nprint(cview('%s',%s,%s));"%(no, catid, copyright))
 			return ret
 		chs = re.findall("cview.'([^.]*).html',([0-9]*),([0-9]).", page)
-                chs = chs[:len(chs)/2]
+		chs = chs[:len(chs)/2]
 		v = [c for c in chs if int(c[0].split('-')[-1]) < 8000]
 		s = [c for c in chs if int(c[0].split('-')[-1]) > 7999]
 		return map(getUrl, v[skip:] + s[skip:])
