@@ -29,7 +29,7 @@ class ComicSite(object):
 	def trackList(self):
 		p = "%s-tracklist.txt"%self.path()
 		if os.path.exists(p):
-			return map(str.strip, open(p).readlines())
+			return map(str.strip, [line for line in open(p).readlines() if line[0]!='#'])
 		else:
 			return []
 
