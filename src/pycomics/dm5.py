@@ -20,7 +20,7 @@ class dm5(ComicSite):
 		return re.search('var DM5_COMIC_MNAME="(.*?)"', page).group(1)
 
 	def getVolumnsUrl(self, url, page, skip=0):
-		volumns = re.findall('<li><a href="/(m[0-9]*)/"[^>]*?>([^<]*?)<', page)[::-1]
+		volumns = re.findall('<a href="/(m[0-9]*)/"[^>]*?>([^<]*?)<', page.split('index-title')[0])[:1:-1]
 		return map(lambda (c, n): (c, "%s-%s"%(n.replace('&nbsp;', ' ').split()[0].strip(), c)), volumns[skip:])
 
 	def comicPath(self, i):
