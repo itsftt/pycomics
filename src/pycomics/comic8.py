@@ -67,6 +67,8 @@ function mm(p){return (parseInt((p-1)/10)%10)+(((p-1)%10)*3)}'''
 		else:
 			picsjs = picsjs.group(0).replace("ge('TheImg').src=","for(p=1;p<=ps;p++){print(").replace("jpg';", "jpg')};")
 			for url in self.execJs(self.volumnJs + 'var ch=%s;'%ch + picsjs).split('\n'):
+                                if url.startswith('//'):
+                                    url = "http:"+url
 				self.getPic(url)
 
 		os.chdir('..')
